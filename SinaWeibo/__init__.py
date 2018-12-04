@@ -8,3 +8,4 @@ from .weibo import Weibo
 from .fans import Fans
 from .follow import Follow,FollowType
 from .blog import Blog
+from .push import Push

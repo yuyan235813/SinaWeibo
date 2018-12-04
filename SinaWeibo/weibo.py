@@ -37,7 +37,7 @@ class Weibo(object):
     def __make_header(self, referer=''):
         self.session.headers = {
             'Host': 'weibo.com',
-            'Origin': 'http://weibo.com',
+            'Origin': 'https://weibo.com',
             'Referer': referer,
             'X-Requested-With': 'XMLHttpRequest',
             "User-Agent": user_agent
@@ -172,9 +172,8 @@ class Weibo(object):
     def comment(self, url, referer, text=""):
         # 访问评论页面
         htmlBody = self.visit(url)
-        sleepSeconds = random.randint(5, 10)
-        print('visit comment page success, waiting for %d seconds' % sleepSeconds)
-        time.sleep(sleepSeconds)
+        print('visit comment page success, waiting for %d seconds' % 1)
+        time.sleep(1)
         fieldDic = self.getField(htmlBody)
         if not fieldDic:
             return False
@@ -191,8 +190,8 @@ class Weibo(object):
             '_t': 0
         }
         self.__make_header(referer)
-        jsonData = self.session.post('http://weibo.com/aj/v6/comment/add?ajwvr=6&__rnd=%d' %int(round(time.time() * 1000)), postData).text
-        print(jsonData)
+        print(postData)
+        jsonData = self.session.post('https://weibo.com/aj/v6/comment/add?ajwvr=6&__rnd=%d' %int(round(time.time() * 1000)), postData).text
         data = json.loads(jsonData)
         code = data['code']
         msg = data['msg']
@@ -206,6 +205,31 @@ class Weibo(object):
         newMid = newMidList[0]
         return newMid
 
+    def like_publish(self, referer):
+        postData = {
+            'location': 'v6_content_home',
+            'group_source': 'group_all',
+            'rid': '1_0_8_2669537541347705214',
+            'version': 'mini',
+            'qid': 'heart',
+            'mid': '4090685231932379',
+            'like_src': 1
+        }
+        header = self.__make_header(referer)
+        self.session.post(self.like_comment_url, postData, headers=header).text
+
+    def like_comment(self, referer):
+        postData = {
+            'location': 'v6_content_home',
+            'group_source': 'group_all',
+            'rid': '4_0_8_2669537541347705214',
+            'object_id': 4090685709235470,
+            'object_type': 'comment'
+        }
+        header = self.makeHeader(referer)
+        print
+        self.weibo.r.post(self.like_comment_url, postData, headers=header).text
+
     def visit(self, url):
         htmlBody = self.session.get(url).text
         if len(htmlBody) > 10000:
@@ -214,14 +238,10 @@ class Weibo(object):
 
     def getField(self, htmlBody):
         try:
-            uid = re.findall(r"CONFIG\[\'uid\'\]=\'\d{0,20}\'", htmlBody)[0].replace("CONFIG['uid']=", "").replace("'",
-                                                                                                                   "")
-            page_id = re.findall(r"CONFIG\[\'page_id\'\]=\'\d{0,30}\'", htmlBody)[0].replace("CONFIG['page_id']=",
-                                                                                             "").replace("'", "")
-            domain = re.findall(r"CONFIG\[\'domain\'\]=\'\d{0,10}\'", htmlBody)[0].replace("CONFIG['domain']=",
-                                                                                           "").replace("'", "")
-            location = re.findall(r"CONFIG\[\'location\'\]=\'.{0,30}\'", htmlBody)[0].replace("CONFIG['location']=",
-                                                                                              "").replace("'", "")
+            uid = re.findall(r"CONFIG\[\'uid\'\]=\'\d{0,20}\'", htmlBody)[0].replace("CONFIG['uid']=", "").replace("'", "")
+            page_id = re.findall(r"CONFIG\[\'page_id\'\]=\'\d{0,30}\'", htmlBody)[0].replace("CONFIG['page_id']=","").replace("'", "")
+            domain = re.findall(r"CONFIG\[\'domain\'\]=\'\d{0,10}\'", htmlBody)[0].replace("CONFIG['domain']=","").replace("'", "")
+            location = re.findall(r"CONFIG\[\'location\'\]=\'.{0,30}\'", htmlBody)[0].replace("CONFIG['location']=","").replace("'", "")
             # midList = re.findall(r"current_mid=\d{0,30}", htmlBody)
             midList = re.findall(r"rid=\d{15,30}", htmlBody)
             if len(midList) == 0:

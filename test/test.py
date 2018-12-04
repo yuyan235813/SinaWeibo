@@ -1,12 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from SinaWeibo import Weibo
+from SinaWeibo import Push
 
 if __name__ == '__main__':
     wb= Weibo("yuyan235813","yy12y090812y")
-    wb.comment('http://weibo.com/5876579840/EFQRIBdmC?from=page_1006065876579840_profile&wvr=6&mod=weibotime&type=comment#_rnd1493179391288',
-               'http://weibo.com/5876579840/EFQRIBdmC?from=page_1006065876579840_profile&wvr=6&mod=weibotime&type=comment#_rnd1493179391288',
-               '呵呵')
+    # wb.comment('https://weibo.com/6868475304/H5HTi6523?from=page_1005056868475304_profile&wvr=6&mod=weibotime&type=comment#_rnd1543931259207',
+    #            'https://weibo.com/6868475304/H5HTi6523?from=page_1005056868475304_profile&wvr=6&mod=weibotime&type=comment',
+    #            'test')
+    push = Push(wb)
+    push.like_publish("https://weibo.com/6868475304/H5HTi6523?from=page_1005056868475304_profile&wvr=6&mod=weibotime&type=comment#_rnd1543931259207")
     # wb.postMessage("0.2测试1:文本")
     # time.sleep(1)
     # wb.postImage("0.2测试2:一张图片","/Downloads/4.png")
